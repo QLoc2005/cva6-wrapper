@@ -33,6 +33,11 @@ module CVA6CoreBlackbox
         parameter [63:0] CACHE_REG_SZ_3 = 0,
         parameter [63:0] CACHE_REG_BASE_4 = 0,
         parameter [63:0] CACHE_REG_SZ_4 = 0,
+        parameter [63:0] NI_REG_CNT = 0,
+        parameter [63:0] NI_REG_BASE_0 = 0,
+        parameter [63:0] NI_REG_SZ_0 = 0,
+        parameter [63:0] NI_REG_BASE_1 = 0,
+        parameter [63:0] NI_REG_SZ_1 = 0,
         parameter [63:0] DEBUG_BASE = 0,
         parameter AXI_ADDRESS_WIDTH = 0,
         parameter AXI_DATA_WIDTH = 0,
@@ -106,10 +111,11 @@ module CVA6CoreBlackbox
         RASDepth: RAS_ENTRIES,
         BTBEntries: BTB_ENTRIES,
         BHTEntries: BHT_ENTRIES,
-        // idempotent region
-        NrNonIdempotentRules:  0,
-        NonIdempotentAddrBase: {64'b0},
-        NonIdempotentLength:   {64'b0},
+        // non-idempotent regions (I/O): the write buffer sends their stores one at a time instead of merging
+        // stores to the same word, and loads from them wait until they are no longer speculative
+        NrNonIdempotentRules:  NI_REG_CNT,
+        NonIdempotentAddrBase: {NI_REG_BASE_1, NI_REG_BASE_0},
+        NonIdempotentLength:   {  NI_REG_SZ_1,   NI_REG_SZ_0},
         // execute region
         NrExecuteRegionRules:  EXEC_REG_CNT,
         ExecuteRegionAddrBase: {EXEC_REG_BASE_4, EXEC_REG_BASE_3, EXEC_REG_BASE_2, EXEC_REG_BASE_1, EXEC_REG_BASE_0},

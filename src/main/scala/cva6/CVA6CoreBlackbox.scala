@@ -47,6 +47,10 @@ class CVA6CoreBlackbox(
   cacheRegCnt: Int,
   cacheRegBase: Seq[BigInt],
   cacheRegSz: Seq[BigInt],
+  niRegAvail: Int = 2,
+  niRegCnt: Int = 0,
+  niRegBase: Seq[BigInt] = Seq(0, 0),
+  niRegSz: Seq[BigInt] = Seq(0, 0),
   debugBase: BigInt,
   axiAddrWidth: Int,
   axiDataWidth: Int,
@@ -62,6 +66,7 @@ class CVA6CoreBlackbox(
       "BHT_ENTRIES" -> IntParam(bhtEntries),
       "EXEC_REG_CNT" -> IntParam(exeRegCnt),
       "CACHE_REG_CNT" -> IntParam(cacheRegCnt),
+      "NI_REG_CNT" -> IntParam(niRegCnt),
       "DEBUG_BASE" -> IntParam(debugBase),
       "AXI_ADDRESS_WIDTH" -> IntParam(axiAddrWidth),
       "AXI_DATA_WIDTH" -> IntParam(axiDataWidth),
@@ -71,7 +76,9 @@ class CVA6CoreBlackbox(
     (0 until execRegAvail).map(i => s"EXEC_REG_BASE_$i" -> IntParam(exeRegBase(i))).toMap ++
     (0 until execRegAvail).map(i => s"EXEC_REG_SZ_$i" -> IntParam(exeRegSz(i))).toMap ++
     (0 until cacheRegAvail).map(i => s"CACHE_REG_BASE_$i" -> IntParam(cacheRegBase(i))).toMap ++
-    (0 until cacheRegAvail).map(i => s"CACHE_REG_SZ_$i" -> IntParam(cacheRegSz(i))).toMap
+    (0 until cacheRegAvail).map(i => s"CACHE_REG_SZ_$i" -> IntParam(cacheRegSz(i))).toMap ++
+    (0 until niRegAvail).map(i => s"NI_REG_BASE_$i" -> IntParam(niRegBase(i))).toMap ++
+    (0 until niRegAvail).map(i => s"NI_REG_SZ_$i" -> IntParam(niRegSz(i))).toMap
   )
   with HasBlackBoxPath
 {

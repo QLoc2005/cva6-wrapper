@@ -38,7 +38,11 @@ case class CVA6CoreParams(
   bhtEntries: Int = 16,
   pmpEntries: Int = 4,
   enableToFromHostCaching: Boolean = false,
+  // (base, size) of up to 2 non-idempotent (I/O) regions: without one, the core merges stores to the same word
+  // of a device register in its write buffer and may issue device loads speculatively
+  nonIdempotentRegions: Seq[(BigInt, BigInt)] = Nil,
 ) extends CoreParams {
+  require(nonIdempotentRegions.size <= 2, "CVA6CoreBlackbox takes up to 2 non-idempotent regions")
   /* DO NOT CHANGE BELOW THIS */
   val useVM: Boolean = true
   val useHypervisor: Boolean = false
@@ -252,6 +256,9 @@ class CVA6TileModuleImp(outer: CVA6Tile) extends BaseTileModuleImp(outer){
     cacheRegCnt = cacheableRegionCnt,
     cacheRegBase = cacheableRegionBases,
     cacheRegSz = cacheableRegionSzs,
+    niRegCnt = outer.cva6Params.core.nonIdempotentRegions.size,
+    niRegBase = outer.cva6Params.core.nonIdempotentRegions.map(_._1).padTo(2, BigInt(0)),
+    niRegSz = outer.cva6Params.core.nonIdempotentRegions.map(_._2).padTo(2, BigInt(0)),
     debugBase = debugBaseAddr,
     axiAddrWidth = 64, // CONSTANT: addr width for TL can differ
     axiDataWidth = outer.beatBytes * 8,
